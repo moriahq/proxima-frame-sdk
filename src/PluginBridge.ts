@@ -112,7 +112,7 @@ interface FrameWindow extends Window {
     });
 
     window.PluginBridge.contextUpdatedListener((data) => {
-        const {PROXIMA_GATWAY, PROXIMA_APP_ID, sessionToken} = data;
+        const {PROXIMA_GATWAY, PROXIMA_APP_ID, sessionToken} = data.env;
         Parse.serverURL = `${PROXIMA_GATWAY}/parse`;
         Parse.initialize(PROXIMA_APP_ID);
         Parse.User.become(sessionToken);
