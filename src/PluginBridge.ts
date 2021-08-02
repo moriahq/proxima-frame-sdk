@@ -5,6 +5,13 @@ export interface PluginBridgeProps extends IFrameMessageProps {
     context?: any
 }
 
+export enum EVENT_TYPES {
+    // 创建一个message
+    CREATE_ALERT = 'CREATE_ALERT',
+    // 刷新插件执行上下文
+    REFRESH_CONTEXT = 'REFRESH_CONTEXT',
+}
+
 class PluginBridge extends FrameMessage {
     public context: any;
     public Parse: any;
@@ -58,7 +65,7 @@ class PluginBridge extends FrameMessage {
         })
     }
 
-    postEventRequest(type, payload) {
+    postEventRequest(type: EVENT_TYPES, payload) {
         return new Promise((resolve) => {
             this.postMessage(type, payload, resolve);
         })
