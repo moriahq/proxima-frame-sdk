@@ -1,0 +1,29 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <script src="./build/PluginBridge.js"></script>
+  <title></title>
+</head>
+<body>
+<button id="openMessageBtn">打开一个message</button>
+<button id="refreshContext">刷新context</button>
+<script>
+  const PluginBridge = window.PluginBridge;
+
+  PluginBridge.contextUpdatedListener((data) => {
+    const Parse = PluginBridge.Parse;
+    new Parse.Query('Tenant').findAll().then(res => {
+      console.log(res);
+    })
+  })
+
+  document.getElementById("openMessageBtn").onclick = function() {
+    PluginBridge.postEventRequest('CREATE_ALERT', 'helloworld')
+  }
+
+  document.getElementById("refreshContext").onclick = function() {
+    PluginBridge.postEventRequest('REFRESH_CONTEXT')
+  }
+</script>
+</body>
+</html>
