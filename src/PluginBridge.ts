@@ -1,5 +1,4 @@
 import {FrameMessage, IFrameMessageProps} from "./FrameMessage";
-
 const Parse = require('parse');
 
 export interface PluginBridgeProps extends IFrameMessageProps {
@@ -8,6 +7,7 @@ export interface PluginBridgeProps extends IFrameMessageProps {
 
 class PluginBridge extends FrameMessage {
     public context: any;
+    public Parse: any;
     private readonly listeners: { updateContext: any[] };
     private readonly requestIds: {};
 
@@ -106,5 +106,6 @@ interface FrameWindow extends Window {
     const {PROXIMA_GATWAY, appId, sessionToken} = window.PluginBridge.context;
     Parse.serverURL = `${PROXIMA_GATWAY}/parse`;
     Parse.initialize(appId);
-    Parse.User.become(sessionToken)
+    Parse.User.become(sessionToken);
+    window.PluginBridge.Parse = Parse;
 })(window as FrameWindow & typeof globalThis);
