@@ -7,7 +7,7 @@ module.exports = function (webpackEnv) {
     const isEnvProduction = webpackEnv === 'production';
 
     return {
-        mode: "development",
+        mode: "production",
         bail: isEnvProduction,
         devtool: isEnvProduction ? 'source-map' : 'cheap-module-source-map',
         entry: {

@@ -5,11 +5,24 @@ export interface PluginBridgeProps extends IFrameMessageProps {
     context?: any
 }
 
+export enum FetchMethod {
+    // data: []
+    Default = 'find',
+    // data: {count: number, results: any[]}
+    All = 'findAll',
+    // Retrieves at most one Parse.Object that satisfies this query.
+    // Returns the object if there is one, otherwise undefined.
+    First = 'first',
+    Count = 'count',
+}
+
 export enum EVENT_TYPES {
     // 创建一个message
     CREATE_ALERT = 'CREATE_ALERT',
     // 刷新插件执行上下文
     REFRESH_CONTEXT = 'REFRESH_CONTEXT',
+    // 发起一个请求
+    INVOKE = 'INVOKE',
 }
 
 class PluginBridge extends FrameMessage {
@@ -40,9 +53,7 @@ class PluginBridge extends FrameMessage {
 
     postInvokeRequest(payload) {
         return new Promise((resolve) => {
-            const messageId = performance.now();
-            this.requestIds[messageId] = resolve;
-            this.postMessage('INVOKE', payload, messageId);
+            this.postMessage('INVOKE', payload, resolve);
         })
     }
 
@@ -59,6 +70,7 @@ class PluginBridge extends FrameMessage {
             type: messageType,
             payload: payload,
             __message__: {
+                context: this.context,
                 messageId: messageId,
                 contextId: this.context.__contextId__
             }
@@ -89,7 +101,8 @@ class PluginBridge extends FrameMessage {
     }
 
     updateContext(context) {
-        this.context = context;
+        this.context = context.context;
+        this.context.frame = context.context.frame;
         this.emitListener('updateContext', context);
     }
 
@@ -97,6 +110,14 @@ class PluginBridge extends FrameMessage {
         if (type === 'invoke') {
             return await this.postInvokeRequest({functionKey, payload})
         }
+    }
+
+    async query(query, method: FetchMethod) {
+        return await this.postInvokeRequest({className: query.className, query: query.toJSON(), method})
+    }
+
+    async selfQuery(query, method: FetchMethod) {
+        return await this.postInvokeRequest({className: query.className, query: query.toJSON(), method, isExternal: true})
     }
 }
 
