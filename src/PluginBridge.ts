@@ -100,10 +100,10 @@ class PluginBridge extends FrameMessage {
         }
     }
 
-    updateContext(context) {
-        this.context = context.context;
-        this.context.frame = context.context.frame;
-        this.emitListener('updateContext', context);
+    updateContext(contextMessage) {
+        this.context = contextMessage.context;
+        this.context.frame = contextMessage.frame;
+        this.emitListener('updateContext', contextMessage);
     }
 
     async callBridge(type, {functionKey, payload}) {
